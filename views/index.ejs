@@ -4,11 +4,11 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>WeatherStar 4000+</title>
-  <meta name="description" content="Web based WeatherStar 4000 simulator that reports current and forecast weather conditions plus a few extras!" />
-  <meta name="keywords" content="WeatherStar 4000+" />
+  <title><%= (typeof OVERRIDES !== 'undefined' && OVERRIDES.TITLE) ? OVERRIDES.TITLE : 'WeatherStar 4000+' %></title>
+  <meta name="description" content="<%= (typeof OVERRIDES !== 'undefined' && OVERRIDES.TITLE) ? OVERRIDES.TITLE : 'Web based WeatherStar 4000 simulator that reports current and forecast weather conditions plus a few extras!' %>" />
+  <meta name="keywords" content="<%= (typeof OVERRIDES !== 'undefined' && OVERRIDES.TITLE) ? OVERRIDES.TITLE : 'WeatherStar 4000+' %>" />
   <meta name="author" content="Matt Walsh" />
-  <meta name="application-name" content="WeatherStar 4000+" />
+  <meta name="application-name" content="<%= (typeof OVERRIDES !== 'undefined' && OVERRIDES.TITLE) ? OVERRIDES.TITLE : 'WeatherStar 4000+' %>" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1">
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -63,6 +63,7 @@
   <script type="module" src="scripts/modules/settings.mjs"></script>
   <script type="module" src="scripts/modules/media.mjs"></script>
   <script type="module" src="scripts/modules/custom-rss-feed.mjs"></script>
+  <script type="module" src="scripts/modules/photofeed.mjs"></script>
   <script type="module" src="scripts/index.mjs"></script>
   <% } %>
 
@@ -89,7 +90,7 @@
       <div id="container">
         <div id="loading" width="640" height="480">
           <div>
-            <div class="title">WeatherStar 4000+</div>
+            <div class="title"><%= (typeof OVERRIDES !== 'undefined' && OVERRIDES.TITLE) ? OVERRIDES.TITLE : 'WeatherStar 4000+' %></div>
             <div class="version">v<%- version %></div>
             <div class="instructions">Enter your location above to continue</div>
           </div>
@@ -129,6 +130,9 @@
         </div>
         <div id="radar-html" class="weather-display">
           <%- include('partials/radar.ejs') %>
+        </div>
+        <div id="photo-feed-html" class="weather-display">
+          <%- include('partials/photo-feed.ejs') %>
         </div>
         <div id="hazards-html" class="weather-display">
           <%- include('partials/hazards.ejs') %>

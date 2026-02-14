@@ -1,0 +1,50 @@
+@use 'shared/_colors'as c;
+@use 'shared/_utils'as u;
+
+#photo-feed-html.weather-display {
+	background-image: url('../images/backgrounds/6.png');
+}
+
+.weather-display .main.photo-feed {
+	height: 310px;
+	overflow: hidden;
+	position: relative;
+
+	.photo-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		height: 100%;
+	}
+
+	.photo-frame {
+		width: 520px;
+		height: 240px;
+		background: black;
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		margin-top: 10px;
+
+		.photo img {
+			max-width: 520px;
+			max-height: 240px;
+			object-fit: contain;
+		}
+	}
+
+	.caption {
+		font-family: 'Star4000';
+		font-size: 18pt;
+		color: white;
+		@include u.text-shadow();
+		text-align: center;
+		margin-top: 8px;
+		max-width: 520px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
