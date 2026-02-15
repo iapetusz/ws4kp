@@ -8,24 +8,26 @@ import { registerDisplay } from './navigation.mjs';
 import Setting from './utils/setting.mjs';
 
 const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp)$/i;
-const MAX_PHOTOS = 10;
+const MAX_PHOTOS = Infinity;
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
 
 // cached photo list
 let cachedPhotos = null;
 let cacheTimestamp = 0;
 
+const PHOTOS_PER_CYCLE = 5;
+
 class PhotoFeed extends WeatherDisplay {
 	constructor(navId, elemId) {
 		super(navId, elemId, 'Photo Feed', false);
 
-		// show photos per playlist cycle
-		this.timing.totalScreens = 5;
+		// show 5 photos per playlist cycle
+		this.timing.totalScreens = PHOTOS_PER_CYCLE;
 		this.timing.delay = 1;
 		this.timing.baseDelay = 7000;
 
 		// track position across playlist cycles
-		this.nextPhotoIndex = 0;
+		this.photoOffset = 0;
 	}
 
 	async getData(weatherParameters, refresh) {
@@ -57,22 +59,9 @@ class PhotoFeed extends WeatherDisplay {
 				return;
 			}
 
-			const allPhotos = photos.slice(0, MAX_PHOTOS);
-			const photosPerCycle = 5;
-
-			// wrap around if we've gone past the end
-			if (this.nextPhotoIndex >= allPhotos.length) {
-				this.nextPhotoIndex = 0;
-			}
-
-			// grab the next batch, wrapping around if needed
-			this.data = [];
-			for (let i = 0; i < photosPerCycle && i < allPhotos.length; i += 1) {
-				this.data.push(allPhotos[(this.nextPhotoIndex + i) % allPhotos.length]);
-			}
-			this.nextPhotoIndex = (this.nextPhotoIndex + photosPerCycle) % allPhotos.length;
-
-			this.timing.totalScreens = this.data.length;
+			// store all photos, cycling is handled in drawCanvas
+			this.data = photos;
+			this.timing.totalScreens = Math.min(PHOTOS_PER_CYCLE, this.data.length);
 			this.calcNavTiming();
 			this.screenIndex = 0;
 			this.setStatus(STATUS.loaded);
@@ -85,10 +74,17 @@ class PhotoFeed extends WeatherDisplay {
 	async drawCanvas() {
 		super.drawCanvas();
 
-		const photo = this.data[this.screenIndex];
+		// map screenIndex (0-4) to the actual photo using the rolling offset
+		const photoIndex = (this.photoOffset + this.screenIndex) % this.data.length;
+		const photo = this.data[photoIndex];
 		if (!photo) {
 			this.finishDraw();
 			return;
+		}
+
+		// advance offset when we've shown the last photo in this cycle
+		if (this.screenIndex === this.timing.totalScreens - 1) {
+			this.photoOffset = (this.photoOffset + this.timing.totalScreens) % this.data.length;
 		}
 
 		// fill the template

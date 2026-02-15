@@ -5,6 +5,7 @@ import getHourlyData from './hourly.mjs';
 import WeatherDisplay from './weatherdisplay.mjs';
 import { registerDisplay, timeZone } from './navigation.mjs';
 import { DateTime } from '../vendor/auto/luxon.mjs';
+import Setting from './utils/setting.mjs';
 
 // get available space
 const availableWidth = 532;
@@ -91,9 +92,9 @@ class HourlyGraph extends WeatherDisplay {
 			lineWidth: 3,
 		});
 
-		// calculate temperature scale for min and max of dewpoint and temperature
-		const minScale = Math.min(...this.data.dewpoint, ...this.data.temperature);
-		const maxScale = Math.max(...this.data.dewpoint, ...this.data.temperature);
+			// temperature scale using fixed axis limits from settings
+		const minScale = graphTempMin.value;
+		const maxScale = graphTempMax.value;
 		const thirdScale = (maxScale - minScale) / 3;
 		const midScale1 = Math.round(minScale + thirdScale);
 		const midScale2 = Math.round(minScale + (thirdScale * 2));
@@ -175,6 +176,27 @@ const formatTime = (time, prev) => {
 		formatted: ts.toFormat(format).slice(0, -1),
 	};
 };
+
+// temperature axis settings
+const graphTempMax = new Setting('graphTempMax', {
+	name: 'Graph Temp Max',
+	type: 'select',
+	defaultValue: 120,
+	values: [[120, '120°'], [110, '110°'], [100, '100°'], [90, '90°'], [80, '80°']],
+});
+
+const graphTempMin = new Setting('graphTempMin', {
+	name: 'Graph Temp Min',
+	type: 'select',
+	defaultValue: -40,
+	values: [[-40, '-40°'], [-20, '-20°'], [0, '0°'], [10, '10°'], [20, '20°']],
+});
+
+// add settings to the page
+document.addEventListener('DOMContentLoaded', () => {
+	const settingsSection = document.querySelector('#settings');
+	settingsSection.append(graphTempMax.generate(), graphTempMin.generate());
+});
 
 // register display
 registerDisplay(new HourlyGraph(4, 'hourly-graph'));
