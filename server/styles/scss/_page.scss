@@ -441,6 +441,26 @@ body {
 			}
 		}
 	}
+
+	#btnStop {
+		margin-top: 10px;
+		padding: 6px 16px;
+		background-color: hsl(0, 70%, 45%);
+		color: white;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 14px;
+
+		&:hover {
+			background-color: hsl(0, 70%, 35%);
+		}
+
+		&:disabled {
+			background-color: hsl(0, 0%, 50%);
+			cursor: not-allowed;
+		}
+	}
 }
 
 #divTwcBottom img {

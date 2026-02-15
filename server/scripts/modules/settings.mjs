@@ -44,9 +44,11 @@ const kioskChange = (value) => {
 
 	if (value) {
 		body.classList.add('kiosk');
+		document.querySelector('#divTwc')?.classList.add('no-cursor');
 		window.dispatchEvent(new Event('resize'));
 	} else {
 		body.classList.remove('kiosk');
+		document.querySelector('#divTwc')?.classList.remove('no-cursor');
 		window.dispatchEvent(new Event('resize'));
 	}
 
@@ -230,6 +232,22 @@ document.addEventListener('DOMContentLoaded', () => {
 	const settingsSection = document.querySelector('#settings');
 	settingsSection.innerHTML = '';
 	settingsSection.append(...settingHtml);
+
+	// add stop button
+	const stopButton = document.createElement('button');
+	stopButton.id = 'btnStop';
+	stopButton.textContent = 'Stop';
+	stopButton.type = 'button';
+	stopButton.addEventListener('click', async () => {
+		stopButton.disabled = true;
+		stopButton.textContent = 'Stopping...';
+		try {
+			await fetch('/stop', { method: 'POST' });
+		} catch (e) {
+			// server may shut down before responding
+		}
+	});
+	settingsSection.append(stopButton);
 
 	// update visibility on some settings
 	const modeSelect = document.getElementById('settings-scanLineMode-label');

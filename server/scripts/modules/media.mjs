@@ -12,7 +12,7 @@ let volumeSliderInput = null;
 const mediaPlaying = new Setting('mediaPlaying', {
 	name: 'Media Playing',
 	type: 'boolean',
-	defaultValue: false,
+	defaultValue: true,
 	sticky: true,
 });
 
@@ -238,12 +238,13 @@ const sliderChanged = () => {
 const mediaVolume = new Setting('mediaVolume', {
 	name: 'Volume',
 	type: 'select',
-	defaultValue: 0.75,
+	defaultValue: 0.10,
 	values: [
 		[1, '100%'],
 		[0.75, '75%'],
 		[0.50, '50%'],
 		[0.25, '25%'],
+		[0.10, '10%'],
 	],
 	changeAction: setVolume,
 });

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import fs from 'fs';
 import { readFile } from 'fs/promises';
+import { execFile } from 'child_process';
 import {
 	weatherProxy, radarProxy, outlookProxy, mesonetProxy, forecastProxy,
 } from './proxy/handlers.mjs';
@@ -152,6 +153,17 @@ if (!process.env?.STATIC) {
 	// Playlist route is available in server mode (not in static mode)
 	app.get('/playlist.json', playlist);
 }
+
+// Stop endpoint - executes the stop script to shut down kiosk
+app.post('/stop', (req, res) => {
+	const scriptPath = new URL('./ws4kp-stop.sh', import.meta.url).pathname;
+	res.json({ status: 'stopping' });
+	execFile(scriptPath, (error) => {
+		if (error) {
+			console.error('Stop script error:', error.message);
+		}
+	});
+});
 
 // Data endpoints - serve JSON data with long-term caching
 const dataEndpoints = {
