@@ -19,10 +19,13 @@ class PhotoFeed extends WeatherDisplay {
 	constructor(navId, elemId) {
 		super(navId, elemId, 'Photo Feed', false);
 
-		// set timings - 7 seconds per photo
-		this.timing.totalScreens = 0;
+		// show photos per playlist cycle
+		this.timing.totalScreens = 5;
 		this.timing.delay = 1;
 		this.timing.baseDelay = 7000;
+
+		// track position across playlist cycles
+		this.nextPhotoIndex = 0;
 	}
 
 	async getData(weatherParameters, refresh) {
@@ -54,7 +57,21 @@ class PhotoFeed extends WeatherDisplay {
 				return;
 			}
 
-			this.data = photos.slice(0, MAX_PHOTOS);
+			const allPhotos = photos.slice(0, MAX_PHOTOS);
+			const photosPerCycle = 5;
+
+			// wrap around if we've gone past the end
+			if (this.nextPhotoIndex >= allPhotos.length) {
+				this.nextPhotoIndex = 0;
+			}
+
+			// grab the next batch, wrapping around if needed
+			this.data = [];
+			for (let i = 0; i < photosPerCycle && i < allPhotos.length; i += 1) {
+				this.data.push(allPhotos[(this.nextPhotoIndex + i) % allPhotos.length]);
+			}
+			this.nextPhotoIndex = (this.nextPhotoIndex + photosPerCycle) % allPhotos.length;
+
 			this.timing.totalScreens = this.data.length;
 			this.calcNavTiming();
 			this.screenIndex = 0;
@@ -77,7 +94,7 @@ class PhotoFeed extends WeatherDisplay {
 		// fill the template
 		const fill = {
 			photo: { type: 'img', src: photo.url },
-			caption: photo.name,
+			caption: '',
 		};
 		const elem = this.fillTemplate('photo', fill);
 
