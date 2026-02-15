@@ -118,5 +118,25 @@
 		"Name": "Washington DC",
 		"Latitude": 38.8951,
 		"Longitude": -77.0364
+	},
+	{
+		"Name": "Spring",
+		"Latitude": 30.0799,
+		"Longitude": -95.4172
+	},
+	{
+		"Name": "Jacksonville",
+		"Latitude": 30.3322,
+		"Longitude": -81.6557
+	},
+	{
+		"Name": "Columbus",
+		"Latitude": 39.9612,
+		"Longitude": -82.9988
+	},
+	{
+		"Name": "Hamilton",
+		"Latitude": 39.3995,
+		"Longitude": -84.5613
 	}
 ]

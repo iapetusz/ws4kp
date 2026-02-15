@@ -238,5 +238,45 @@
 			"y": 71,
 			"wfo": "LWX"
 		}
+	},
+	{
+		"Name": "Spring",
+		"Latitude": 30.0799,
+		"Longitude": -95.4172,
+		"point": {
+			"x": 61,
+			"y": 109,
+			"wfo": "HGX"
+		}
+	},
+	{
+		"Name": "Jacksonville",
+		"Latitude": 30.3322,
+		"Longitude": -81.6557,
+		"point": {
+			"x": 66,
+			"y": 65,
+			"wfo": "JAX"
+		}
+	},
+	{
+		"Name": "Columbus",
+		"Latitude": 39.9612,
+		"Longitude": -82.9988,
+		"point": {
+			"x": 85,
+			"y": 81,
+			"wfo": "ILN"
+		}
+	},
+	{
+		"Name": "Hamilton",
+		"Latitude": 39.3995,
+		"Longitude": -84.5613,
+		"point": {
+			"x": 33,
+			"y": 51,
+			"wfo": "ILN"
+		}
 	}
 ]
