@@ -132,6 +132,23 @@ if (!process.env?.STATIC) {
 	app.use('/mesonet/', mesonetProxy);
 	app.use('/forecast/', forecastProxy);
 
+	// Photo feed proxy to avoid CORS issues with external photo feed URLs
+	app.get('/photofeed', async (req, res) => {
+		const { url } = req.query;
+		if (!url) return res.status(400).json({ error: 'Missing url parameter' });
+		try {
+			const response = await fetch(url, { headers: { 'User-Agent': 'Weatherstar 4000+' } });
+			if (!response.ok) return res.status(response.status).send(response.statusText);
+			const contentType = response.headers.get('content-type') || 'text/plain';
+			res.setHeader('Content-Type', contentType);
+			res.setHeader('Cache-Control', 'public, max-age=3600');
+			const body = await response.text();
+			return res.send(body);
+		} catch (error) {
+			return res.status(502).json({ error: error.message });
+		}
+	});
+
 	// Playlist route is available in server mode (not in static mode)
 	app.get('/playlist.json', playlist);
 }

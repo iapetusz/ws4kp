@@ -90,27 +90,45 @@ class PhotoFeed extends WeatherDisplay {
 	}
 }
 
-// fetch and parse an HTTP directory listing for image files
+// fetch photo list from a JSON manifest or HTML directory listing
 const fetchPhotoList = async (directoryUrl) => {
-	let html;
+	let response;
 
-	// try direct fetch first
-	html = await safeText(directoryUrl, { retryCount: 1, timeout: 10000 });
+	// use the server-side proxy to avoid CORS issues, fall back to direct fetch
+	if (window.WS4KP_SERVER_AVAILABLE) {
+		response = await safeText(`/photofeed?url=${encodeURIComponent(directoryUrl)}`, { retryCount: 1, timeout: 10000 });
+	} else {
+		response = await safeText(directoryUrl, { retryCount: 1, timeout: 10000 });
+	}
 
 	// fall back to CORS proxy for external URLs
-	if (!html) {
+	if (!response) {
 		try {
 			const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(directoryUrl)}`;
-			html = await safeText(proxyUrl, { retryCount: 1, timeout: 10000 });
+			response = await safeText(proxyUrl, { retryCount: 1, timeout: 10000 });
 		} catch (_e) {
 			// proxy also failed
 		}
 	}
 
-	if (!html) return [];
+	if (!response) return [];
 
+	// try parsing as JSON manifest first
+	try {
+		const json = JSON.parse(response);
+		const photos = json?.photos ?? json;
+		if (Array.isArray(photos)) {
+			return photos
+				.filter((p) => p.url && IMAGE_EXTENSIONS.test(p.url))
+				.map((p) => ({ name: p.name ?? decodeURIComponent(p.url.split('/').pop()), url: p.url }));
+		}
+	} catch (_e) {
+		// not JSON, fall through to HTML parsing
+	}
+
+	// parse as HTML directory listing
 	const parser = new DOMParser();
-	const doc = parser.parseFromString(html, 'text/html');
+	const doc = parser.parseFromString(response, 'text/html');
 
 	// add base URL for resolving relative links
 	const base = doc.createElement('base');
